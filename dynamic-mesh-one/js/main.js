@@ -29,7 +29,9 @@
     var ranTriad = ranColor.triad();
 
     for(var s = 0; s < 3; s++) {
-      geometry = new THREE.TorusKnotGeometry( 10, 1.5, 252, 20, 3, 11 );
+      geometry = new THREE.SphereGeometry(10, 64, 64);
+      //geometry = new THREE.BoxGeometry(10, 30, 10, 50, 50, 50);
+      //geometry = new THREE.TorusKnotGeometry( 10, 1.5, 252, 20, 3, 11 );
 
       material = new THREE.MeshPhongMaterial( { color: ranTriad[s].toHexString(),
     	 											  specular: Math.random()*0xFFFFFF,
@@ -44,7 +46,7 @@
       //mesh.scale.y = 1 + s * 0.1;
       //mesh.scale.z = 1 + s * 0.1;
       mesh.verticesOrigin = new Array();
-      mesh.ranRotation = 0.005;
+      mesh.ranRotation = 0.0005;
       mesh.ranSize = 100 + Math.random() * 400;
 
       mesh.castShadow = true;
