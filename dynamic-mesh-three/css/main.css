@@ -5,7 +5,7 @@ html, body {
 }
 
 body {
-  background-image: url(../img/nebula_stars.png), linear-gradient(320deg, #121212, #fb1344);
+  background-image: url(../img/nebula_stars.png), linear-gradient(320deg, #fb4413, #12e0fc);
 	background-size: cover;
 	background-position: center;
   background-attachment: fixed;
