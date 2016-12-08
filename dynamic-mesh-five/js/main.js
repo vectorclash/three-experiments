@@ -81,7 +81,7 @@
       //mesh.scale.y = 1 + s * 0.01;
       //mesh.scale.z = 1 + s * 0.01;
       mesh.verticesOrigin = new Array();
-      mesh.ranRotation = 0.004;
+      mesh.ranRotation = 0.0002 + (Math.random() * 0.01);
       mesh.ranSize = 100 + Math.random() * 400;
 
       mesh.castShadow = true;
@@ -218,9 +218,9 @@
       var shape = shapes.children[s];
       if(!resetting) {
         for ( var i = 0; i < shape.geometry.vertices.length; i ++ ) {
-          shape.geometry.vertices[i].x = shape.verticesOrigin[i].x + (byteArray[i] * 0.012);
-          shape.geometry.vertices[i].y = shape.verticesOrigin[i].y + (byteArray[i] * 0.02);
-          shape.geometry.vertices[i].z = shape.verticesOrigin[i].z + (byteArray[i] * 0.01);
+          shape.geometry.vertices[i].x = shape.verticesOrigin[i].x * (byteArray[i] * 0.009);
+          shape.geometry.vertices[i].y = shape.verticesOrigin[i].y * (byteArray[i] * 0.009);
+          shape.geometry.vertices[i].z = shape.verticesOrigin[i].z * (byteArray[i] * 0.009);
     		}
       }
 
