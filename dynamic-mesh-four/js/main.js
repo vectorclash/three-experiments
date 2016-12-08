@@ -4,11 +4,27 @@
   var geometry, material;
   var clock = new THREE.Clock();
   var shapes, rings;
-  var shardSize = 0.5;
-  var shapeNum = 3;
+  var shardSize = 2;
+  var shapeNum = 10;
   var resetting = false;
+  var bgColor1 = {r:251, g:68, b:19};
+  var bgColor2 = {r:18, g:224, b:252};
+
+  // phone movement
+
+  var phoneMovement = false;
+
+  var hX = 0;
+  var hY = 0;
+  var hZ = 0;
+
+  var ohX = 0;
+  var ohY = 0;
+  var ohZ = 0;
 
   function init() {
+    setRandomBackgroundGradient();
+
     container = document.querySelector('#three-container');
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000);
@@ -23,10 +39,6 @@
     var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
     directionalLight.position.set( 0, 350, 0 );
     directionalLight.castShadow = true;
-    directionalLight.shadow.camera.right  =  5;
-    directionalLight.shadow.camera.left   = -5;
-    directionalLight.shadow.camera.top    =  5;
-    directionalLight.shadow.camera.bottom = -5;
 
     scene.add( directionalLight );
 
@@ -40,7 +52,7 @@
       //geometry = new THREE.SphereGeometry(10, 64, 64);
       //geometry = new THREE.BoxGeometry(10, 10, 10, 32, 32, 32);
       //geometry = new THREE.TorusKnotGeometry( 10, 1.5, 252, 50, 3, 11 );
-      geometry = new THREE.DodecahedronGeometry(10, 3);
+      geometry = new THREE.TetrahedronGeometry(10, 3);
 
       material = new THREE.MeshPhongMaterial( { color: tinycolor.random().toHexString(),
     	 											  specular: tinycolor.random().toHexString(),
@@ -51,10 +63,12 @@
     	 											  needsUpdate: true });
 
       var mesh = new THREE.Mesh(geometry, material);
-      mesh.rotation.x = s * 5;
-      mesh.scale.x = 1 + s * 0.02;
-      mesh.scale.y = 1 + s * 0.02;
-      mesh.scale.z = 1 + s * 0.02;
+      mesh.rotation.x = s * 20;
+      mesh.rotation.y = s * 20;
+      mesh.rotation.z = s * 20;
+      //mesh.scale.x = 1 + s * 0.01;
+      //mesh.scale.y = 1 + s * 0.01;
+      //mesh.scale.z = 1 + s * 0.01;
       mesh.verticesOrigin = new Array();
       mesh.ranRotation = 0.0009;
       mesh.ranSize = 100 + Math.random() * 400;
@@ -69,6 +83,7 @@
   		}
 
       container.addEventListener('click', onClick);
+      window.addEventListener('devicemotion', onPhoneMovement);
 
       //shockwave(mesh);
     }
@@ -84,6 +99,19 @@
 
     window.addEventListener('resize', onWindowResize, false);
     TweenMax.ticker.addEventListener('tick', render);
+  }
+
+  function setRandomBackgroundGradient() {
+    TweenMax.to(bgColor1, 1, {r:Math.round(Math.random()*255), g:Math.round(Math.random()*255), b:Math.round(Math.random()*255), ease:Quad.easeInOut, delay:1});
+    TweenMax.to(bgColor2, 2, {r:Math.round(Math.random()*255), g:Math.round(Math.random()*255), b:Math.round(Math.random()*255), ease:Quad.easeInOut, onUpdate:updateBackgroundGradient});
+  }
+
+  function updateBackgroundGradient() {
+    document.querySelector('body').style.backgroundImage = 'url(img/nebula_stars.png), linear-gradient(320deg, ' + formatColor(bgColor1) + ', ' + formatColor(bgColor2) + ')';
+  }
+
+  function formatColor(color) {
+    return 'rgb(' + Math.round(color.r) + ', ' + Math.round(color.g) + ', ' + Math.round(color.b) + ')';
   }
 
   function shockwave(shape) {
@@ -133,38 +161,76 @@
 
   function render() {
     var delta = clock.getDelta(),
-		    time = clock.getElapsedTime() * 10;
+		    time = clock.getElapsedTime() * 1;
 
     for(var s = 0; s < shapes.children.length; s++) {
       var shape = shapes.children[s];
       if(!resetting) {
         for ( var i = 0; i < shape.geometry.vertices.length; i ++ ) {
-          shape.geometry.vertices[i].x += noise.perlin3(shape.verticesOrigin[i].x, time, i) * 0.05;
-          shape.geometry.vertices[i].y += noise.perlin3(shape.verticesOrigin[i].y, time, i) * 0.05;
-          shape.geometry.vertices[i].z += noise.perlin3(shape.verticesOrigin[i].z, time, i) * 0.05;
+          shape.geometry.vertices[i].x = shape.verticesOrigin[i].x + noise.perlin3(shape.verticesOrigin[i].x, i, time) * noise.perlin3(shape.verticesOrigin[i].y, time/s, hX) * shardSize;
+          shape.geometry.vertices[i].y = shape.verticesOrigin[i].y + noise.perlin3(shape.verticesOrigin[i].y, i, time) * noise.perlin3(shape.verticesOrigin[i].z, time/s, hY) * shardSize;
+          shape.geometry.vertices[i].z = shape.verticesOrigin[i].z + noise.perlin3(shape.verticesOrigin[i].z, i, time) * noise.perlin3(shape.verticesOrigin[i].x, time/s, hZ) * shardSize;
     		}
       }
 
       shape.geometry.verticesNeedUpdate = true;
 
-      shape.rotation.x += shape.ranRotation;
-      shape.rotation.y += shape.ranRotation;
-      shape.rotation.z += shape.ranRotation;
+      if(hX != 0) {
+        shape.rotation.x = hX*(s*0.05);
+    		shape.rotation.y = hY*(s*0.02);
+    		shape.rotation.z = hZ*(s*0.03);
+      } else {
+        shape.rotation.x += shape.ranRotation;
+        shape.rotation.y += shape.ranRotation;
+        shape.rotation.z += shape.ranRotation;
+      }
     }
 
 		renderer.render( scene, camera );
   }
 
+  function onPhoneMovement(e) {
+  	var x = e.accelerationIncludingGravity.y;
+  	var y = e.accelerationIncludingGravity.x;
+  	var z = e.accelerationIncludingGravity.z;
+
+  	hX += (x - ohX) / 50;
+  	hY += (y - ohY) / 50;
+  	hZ += (z - ohZ) / 50;
+
+  	ohX = hX;
+  	ohY = hY;
+  	ohZ = hZ;
+  }
+
   function onClick(event) {
     if(resetting) {
       resetting = false;
-    } else {
-      resetting = true;
+      shardSize = 0.5 + Math.random() * 10;
       for(var s = 0; s < shapes.children.length; s++) {
         var shape = shapes.children[s];
+        setRandomBackgroundGradient();
         TweenMax.to(shape.material.color, 1, {r:Math.random(), g:Math.random(), b:Math.random(), ease:Bounce.easeOut, delay:s*0.02});
+      }
+    } else {
+      resetting = true;
+      var ranR = Math.random();
+      var ranG = Math.random();
+      var ranB = Math.random();
+      for(var s = 0; s < shapes.children.length; s++) {
+        var shape = shapes.children[s];
+        ranR += getRandomArbitrary(-0.2, 0.2);
+        if(ranR > 1.0) {
+          ranR = 1.0;
+        }
+
+        ranG += getRandomArbitrary(-0.2, 0.2);
+        if(ranG > 1.0) {
+          ranG = 1.0;
+        }
+        TweenMax.to(shape.material.color, 1, {r:ranR, g:ranG, b:ranB, ease:Bounce.easeOut, delay:s*0.02});
         for ( var i = 0; i < shape.geometry.vertices.length; i ++ ) {
-          TweenMax.to(shape.geometry.vertices[i], 1, {x:shape.verticesOrigin[i].x, y:shape.verticesOrigin[i].y, z:shape.verticesOrigin[i].z, ease:Bounce.easeOut, delay:i*0.0005});
+          TweenMax.to(shape.geometry.vertices[i], 1, {x:shape.verticesOrigin[i].x, y:shape.verticesOrigin[i].y, z:shape.verticesOrigin[i].z, ease:Bounce.easeOut, delay:i*0.005});
       	}
       }
     }
