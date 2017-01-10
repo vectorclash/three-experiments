@@ -113,7 +113,7 @@
   }
 
   function updateBackgroundGradient() {
-    document.querySelector('body').style.backgroundImage = 'url(img/nebula_stars.png), linear-gradient(320deg, ' + formatColor(bgColor1) + ', ' + formatColor(bgColor2) + ')';
+    document.querySelector('body').style.backgroundImage = 'linear-gradient(320deg, ' + formatColor(bgColor1) + ', ' + formatColor(bgColor2) + ')';
   }
 
   function formatColor(color) {
