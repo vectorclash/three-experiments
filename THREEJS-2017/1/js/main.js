@@ -3,6 +3,7 @@ var camera;
 var renderer;
 var directionalLight, ambientLight;
 var mainContainer, tContainer;
+var clock = new THREE.Clock();
 
 function init() {
 	scene = new THREE.Scene();
@@ -50,7 +51,12 @@ function init() {
 	  var material3 = new THREE.MeshBasicMaterial({map: newGradientTexture, side: THREE.DoubleSide});
 		var geometry3 = new THREE.SphereGeometry(24, 64, 64);
 		var sphere3 = new THREE.Mesh(geometry3, material3);
+		sphere3.verticesOrigin = new Array();
 		mainContainer.add(sphere3);
+
+		for ( var i = 0; i < geometry3.vertices.length; i ++ ) {
+			sphere3.verticesOrigin.push({x:sphere3.geometry.vertices[i].x, y:sphere3.geometry.vertices[i].y, z:sphere3.geometry.vertices[i].z});
+		}
 	});
 
 	window.addEventListener("click", onMouseClick);
@@ -90,9 +96,28 @@ function gradientTexture() {
 function render() {
 	renderer.render(scene, camera);
 	for(var i = 0; i < mainContainer.children.length; i++) {
-		mainContainer.children[i].rotation.x+=(0.009)+(i*0.002);
-		mainContainer.children[i].rotation.y+=(0.009)+(i*0.002);
-		mainContainer.children[i].rotation.z+-(0.009)+(i*0.002);
+		mainContainer.children[i].rotation.x+=(0.002)+(i*0.002);
+		mainContainer.children[i].rotation.y+=(0.002)+(i*0.002);
+		mainContainer.children[i].rotation.z+=(0.002)+(i*0.002);
+	}
+
+	var delta1 = clock.getDelta(),
+			time1 = clock.getElapsedTime() * 2;
+
+	var delta2 = clock.getDelta(),
+			time2 = clock.getElapsedTime() * 3;
+
+	var delta3 = clock.getDelta(),
+			time3 = clock.getElapsedTime() * 4;
+
+	var shape = mainContainer.children[2];
+	if(shape) {
+		for ( var i = 0; i < shape.geometry.vertices.length; i ++ ) {
+					shape.geometry.vertices[i].x = shape.verticesOrigin[i].x * 0.8 + (0.5 + noise.perlin3(shape.verticesOrigin[i].x, 10, noise.perlin2(time1, 29)) * 2.5);
+					shape.geometry.vertices[i].y = shape.verticesOrigin[i].y * 0.8 + (0.5 + noise.perlin3(shape.verticesOrigin[i].y, 20, noise.perlin2(time2, 39)) * 2.5);
+					shape.geometry.vertices[i].z = shape.verticesOrigin[i].z * 0.8 + (0.5 + noise.perlin3(shape.verticesOrigin[i].z, 30, noise.perlin2(time3, 49)) * 2.5);
+		}
+		shape.geometry.verticesNeedUpdate = true;
 	}
 }
 
