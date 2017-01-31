@@ -113,9 +113,9 @@ function render() {
 	var shape = mainContainer.children[2];
 	if(shape) {
 		for ( var i = 0; i < shape.geometry.vertices.length; i ++ ) {
-					shape.geometry.vertices[i].x = shape.verticesOrigin[i].x * 0.8 + (0.5 + noise.perlin3(shape.verticesOrigin[i].x, 10, noise.perlin2(time1, 29)) * 2.5);
-					shape.geometry.vertices[i].y = shape.verticesOrigin[i].y * 0.8 + (0.5 + noise.perlin3(shape.verticesOrigin[i].y, 20, noise.perlin2(time2, 39)) * 2.5);
-					shape.geometry.vertices[i].z = shape.verticesOrigin[i].z * 0.8 + (0.5 + noise.perlin3(shape.verticesOrigin[i].z, 30, noise.perlin2(time3, 49)) * 2.5);
+					shape.geometry.vertices[i].x = shape.verticesOrigin[i].x * 0.9 + (0.5 + noise.perlin3(shape.verticesOrigin[i].x, 10, noise.perlin2(time1, 29)) * 2.5);
+					shape.geometry.vertices[i].y = shape.verticesOrigin[i].y * 0.9 + (0.5 + noise.perlin3(shape.verticesOrigin[i].y, 20, noise.perlin2(time2, 39)) * 2.5);
+					shape.geometry.vertices[i].z = shape.verticesOrigin[i].z * 0.9 + (0.5 + noise.perlin3(shape.verticesOrigin[i].z, 30, noise.perlin2(time3, 49)) * 2.5);
 		}
 		shape.geometry.verticesNeedUpdate = true;
 	}
