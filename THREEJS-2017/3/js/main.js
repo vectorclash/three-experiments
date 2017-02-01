@@ -70,7 +70,7 @@ function init() {
 
 function createTexturedSphere(image) {
 	sphereSize += 1;
-	var material = new THREE.MeshLambertMaterial({map:image, transparent: true, opacity: 0.5});
+	var material = new THREE.MeshLambertMaterial({map:image, transparent: true, opacity: 0.2});
 	var geometry = new THREE.SphereGeometry(sphereSize, 64, 64);
 	var sphere = new THREE.Mesh(geometry, material);
 	sphere.verticesOrigin = new Array();
@@ -130,9 +130,9 @@ function changeGradientColor() {
 function render() {
 	renderer.render(scene, camera);
 	for(var i = 0; i < mainContainer.children.length; i++) {
-		mainContainer.children[i].rotation.x+=(0.002)+(i*0.002);
-		mainContainer.children[i].rotation.y+=(0.002)+(i*0.002);
-		mainContainer.children[i].rotation.z+=(0.002)+(i*0.002);
+		mainContainer.children[i].rotation.x+=(0.002)+(i*0.0008);
+		mainContainer.children[i].rotation.y+=(0.002)+(i*0.0008);
+		mainContainer.children[i].rotation.z+=(0.002)+(i*0.0008);
 	}
 
 	var delta1 = clock.getDelta(),
@@ -155,7 +155,8 @@ function render() {
 }
 
 function onMouseClick(e) {
-	TweenMax.to(window, 0.5, {xMod:Math.random()*25, yMod:Math.random()*25, zMod:Math.random()*25, ease:Back.easeOut});
+	var ranMod = 5+Math.random()*20;
+	TweenMax.to(window, 0.5, {xMod:ranMod, yMod:ranMod, zMod:ranMod, ease:Back.easeOut});
 	TweenMax.to(window, 0.5, {xMod:modBase, yMod:modBase, zMod:modBase, delay:0.5, ease:Elastic.easeOut});
 	TweenMax.delayedCall(0.5, changeGradientColor);
 }
