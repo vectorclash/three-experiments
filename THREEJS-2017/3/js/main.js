@@ -70,7 +70,7 @@ function init() {
 
 function createTexturedSphere(image) {
 	sphereSize += 1;
-	var material = new THREE.MeshLambertMaterial({map:image, transparent: true, opacity: 0.2});
+	var material = new THREE.MeshLambertMaterial({map:image, transparent: true, opacity: 0.8});
 	var geometry = new THREE.SphereGeometry(sphereSize, 64, 64);
 	var sphere = new THREE.Mesh(geometry, material);
 	sphere.verticesOrigin = new Array();
