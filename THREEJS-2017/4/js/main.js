@@ -10,6 +10,7 @@ var hue1 = 0;
 var hue2 = 20;
 var word = '';
 var oldWord = '';
+var maxWords = 100;
 
 function init() {
 	scene = new THREE.Scene();
@@ -88,7 +89,7 @@ function createText(text, remove = false) {
 
 		// textMaterial = new THREE.MeshPhongMaterial( { color: color2.toHexString(), shading: THREE.SmoothShading } );
 
-		textGeometry = new THREE.TextGeometry(text, {font:fonts[Math.floor(Math.random()*fonts.length)], size:70, height:20, curveSegments:4, bevelThickness:2, bevelSize:1.5, bevelEnabled:true, material: 0, extrudedMaterial: 1});
+		textGeometry = new THREE.TextGeometry(text, {font:fonts[Math.floor(Math.random()*fonts.length)], size:40, height:10, curveSegments:4, bevelThickness:2, bevelSize:1.5, bevelEnabled:true, material: 0, extrudedMaterial: 1});
 		var myText = new THREE.Mesh(textGeometry, textMaterial);
 
 		textGeometry.computeBoundingBox();
@@ -171,6 +172,15 @@ function render() {
 	mainContainer.rotation.x += 0.005;
 	mainContainer.rotation.y += 0.002;
 	mainContainer.rotation.z += 0.005;
+
+	if(mainContainer.children.length > maxWords) {
+		for(var i = 0; i < mainContainer.children.length - maxWords; i++) {
+			var shape = mainContainer.children[i];
+			if(shape) {
+				mainContainer.remove(shape);
+			}
+		}
+	}
 }
 
 function onMouseClick(e) {
